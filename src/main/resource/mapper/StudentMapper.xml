@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cm.weiheng.dao.StudentDao">
+    <!--新增操作   id必须和StudentDao中的方法名称一致-->
+
+    <insert id="addStudent" parameterType="Student">
+        /*因为我们的参数是Student对象   所以 values中的值 必须是Student类中的属性*/
+        INSERT  INTO  student(name,age)  VALUES (#{name},#{age})
+    </insert>
+
+    <delete id="deleteStudent">
+        <!--#{sa} sa仅仅就是一个占位符 写成什么都是可以的 -->
+        DELETE FROM student where id=#{sa}
+    </delete>
+    <!--修改 updateStudent-->
+    <update id="updateStudent">
+        /*这里面的（）必须是和shi体类中的属性baochi一致*/
+      update student set name=#{name},age=#{age} where id=#{id}
+    </update>
+    <!-- 查询所有 list 必须指定返回值的类型resultType是一个学生对象 不然底层没法封装 -->
+    <select id="selectAllStudents" resultType="Student">
+        SELECT id,name,age from student
+    </select>
+    <select id="selectAllStudentsMap" resultMap="studentMap">
+        SELECT id,name,age from student
+    </select>
+    <resultMap id="studentMap" type="Student">
+        <id property="id" column="id"/><!--只针对于主键的设置-->
+        <result property="name" column="name"/> <!--设置除了主键，集合，对象之外的属性-->
+        <result property="age" column="age"/>
+    </resultMap>
+    <!-- 查询指定id学生信息 xxx还是占位符 -->
+    <select id="selectById" resultType="Student" parameterType="int">
+      select id,name,age from student where id=#{xxx}
+
+    </select>
+    <!-- 模糊查询 -->
+    <select id="selectByName" resultType="Student" >
+        <!--
+            01. select *from student where name like concat ('%',#{xxx},'%')
+            02.  使用的是动态参数绑定 底层走的是preparedStatement 常用 select * from student where name like '%' #{xxx} '%'
+            03. 这种底层是使用了Statement 不安全 用户可以sql注入 select * from  student where name like '%${value}%'
+             select * from student where name like '%' #{xxx} '%'
+       -->
+           SELECT  id,name ,age from student WHERE  name like concat('%',#{sss},'%')
+
+           </select>
+
+
+
+
+       </mapper>
